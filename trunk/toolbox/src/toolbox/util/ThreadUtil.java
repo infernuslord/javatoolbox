@@ -39,14 +39,14 @@ public final class ThreadUtil
     }
     
     /**
-     * Runs a specific method in a thread asynchronously
+     * Runs an objects method in a thread 
      * 
      * @param   target      Object which contains method to run
      * @param   methodName  Name of the method to execute
      * @param   params      Method arguments
      * @return  Thread that method is/was executed on
      */
-    public static Thread runInThread(Object target, String methodName, Object[] params)
+    public static Thread run(Object target, String methodName, Object[] params)
     {
         /**
          * Runs a method on a given object in a thread
