@@ -43,14 +43,14 @@ public class ThreadUtilTest extends TestCase
     }
 
     /**
-     * Tests runInThread()
+     * Tests run()
      */
     public void testRunInThread() throws Exception
     {
         Tester target = new Tester();
         
         /* call simple method with no args */
-        ThreadUtil.runInThread(target, "ping", new Object[0]);
+        ThreadUtil.run(target, "ping", new Object[0]);
         
         /* call method with args */
         Object[] params = new Object[] 
@@ -59,7 +59,7 @@ public class ThreadUtilTest extends TestCase
             new String[] {"element1", "element2"}
         };
        
-        Thread t = ThreadUtil.runInThread(target, "pingArgs", params);
+        Thread t = ThreadUtil.run(target, "pingArgs", params);
         t.join();
         
         assertTrue("ping was not executed", target.pingCalled);
@@ -67,7 +67,7 @@ public class ThreadUtilTest extends TestCase
     }
  
     /**
-     * Test class for testRunInThread()
+     * Test class for testRun()
      */   
     public class Tester
     {
