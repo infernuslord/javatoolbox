@@ -37,31 +37,37 @@ public class Main
      */
     public static void main(String args[])
     {
-        
         if (args.length == 1) 
-        { 
-            Main f = new Main(args[0], true);
+        {
+            Main findClass = new Main(args[0], true);
         }
         else 
-        { 
-            // print usage
-            System.out.println();
-            System.out.println("Searches for all occurrences of a class in the following places:");
-            System.out.println("  1. Directories in the CLASSPATH");
-            System.out.println("  2. Archives (zip & jar) in the CLASSPATH");
-            System.out.println("  3. Archives in the current directory");
-            System.out.println();
-            System.out.println("The class name is assumed to be a case-insensetive wildcard and");
-            System.out.println("will match any string in a fully qualified class name.");
-            System.out.println();
-            System.out.println("Usage  : java toolbox.findclass.Main <class name>");
-            System.out.println();
-            System.out.println("Example: Find the class java.lang.Object");
-            System.out.println("         java toolbox.findclass.Main java.lang.Object");
-            System.out.println();
-            System.out.println("Example: Find all classes which contain the string 'String'");         
-            System.out.println("         java toolbox.findclass.Main String");
+        {
+            printUsage();
         }
+    }
+
+    /**
+     * Prints program usage
+     */
+    private static void printUsage()
+    {
+        System.out.println("FindClass searches for all occurrences of a class in the following order:");
+        System.out.println("  1. Directories in the CLASSPATH");
+        System.out.println("  2. Archives (zip & jar) in the CLASSPATH");
+        System.out.println("  3. Archives in the current directory");
+        System.out.println("  4. Archives in all recursed directories");            
+        System.out.println();
+        System.out.println("The class name is assumed to be a case-insensetive wildcard and");
+        System.out.println("will match any string in a fully qualified class name.");
+        System.out.println();
+        System.out.println("Usage  : java toolbox.findclass.Main <class name>");
+        System.out.println();
+        System.out.println("Example: To find the class java.lang.Object");
+        System.out.println("         java toolbox.findclass.Main java.lang.Object");
+        System.out.println();
+        System.out.println("Example: Find all classes which contain the string 'String'");         
+        System.out.println("         java toolbox.findclass.Main String");
     }
 
     /**
@@ -91,8 +97,9 @@ public class Main
     /**
      * Filters files based on the files extension
      */
-    private class ExtensionFilter implements FilenameFilter
+    protected class ExtensionFilter implements FilenameFilter
     {
+        /** Extension to filter on **/
         private String extension;
         
         /**
@@ -124,7 +131,7 @@ public class Main
     /**
      * Composite file filter. Matches up to two filters in an OR fashion
      */
-    private class CompositeFilter implements FilenameFilter
+    protected class CompositeFilter implements FilenameFilter
     {
         private FilenameFilter firstFilter;
         private FilenameFilter secondFilter;
@@ -159,7 +166,7 @@ public class Main
     /**
      * Filters directories
      */
-    private class DirectoryFilter implements FilenameFilter
+    protected class DirectoryFilter implements FilenameFilter
     {
         /**
          * Filter out directories
@@ -218,7 +225,7 @@ public class Main
      * @param    filter      Filename filter criteria
      * @return   List of files that match the filter from the start dir
      */    
-    public List findFilesRecursively(String startingDir, FilenameFilter filter)
+    protected List findFilesRecursively(String startingDir, FilenameFilter filter)
     {
         File f = new File(startingDir);
         ArrayList basket = new ArrayList(20);
@@ -380,7 +387,7 @@ public class Main
      * 
      * @return  array of entries contained in the classpath
      */
-    public String[] getClassPath() 
+    protected String[] getClassPath() 
     { 
         return classpath;
     }
@@ -390,7 +397,7 @@ public class Main
      * 
      * @return  the name of the class to find
      */
-    public String getClassToFind() 
+    protected String getClassToFind() 
     { 
         return classToFind;
     }
@@ -401,7 +408,7 @@ public class Main
      * @param   s   absolute name of the java archive
      * @return      true if a valid archive, false otherwise
      */
-    boolean isArchive(String s) 
+    protected boolean isArchive(String s) 
     { 
         s = s.toUpperCase();
         if (s.endsWith(".JAR") || s.endsWith(".ZIP"))
@@ -415,7 +422,7 @@ public class Main
      * 
      * @param   s   array of entries in the classpath
      */
-    public void setClassPath( String[] s ) 
+    protected void setClassPath( String[] s ) 
     { 
         classpath = s;
     }
@@ -425,7 +432,7 @@ public class Main
      * 
      * @param   s   the name of the class to find
      */
-    public void setClassToFind( String s ) 
+    protected void setClassToFind( String s ) 
     { 
         classToFind = s;
     }
@@ -435,7 +442,7 @@ public class Main
      * 
      * @param   b     turns wildcard searh on
      */
-    public void setWildCard( boolean b ) 
+    protected void setWildCard( boolean b ) 
     { 
         wildCard = b;
     }
@@ -445,7 +452,7 @@ public class Main
      * 
      * @return  true if wildcard search turned on, false otherwise
      */
-    public boolean useWildCard() 
+    protected boolean useWildCard() 
     { 
         return wildCard;
     }
