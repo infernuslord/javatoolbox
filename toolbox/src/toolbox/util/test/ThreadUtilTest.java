@@ -1,11 +1,14 @@
 package toolbox.util.test;
 
+import java.io.PrintWriter;
+
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
 import toolbox.util.ArrayUtil;
 import toolbox.util.ThreadUtil;
+import java.io.Writer;
 
 /**
  * Unit test for ThreadUtil
@@ -13,7 +16,7 @@ import toolbox.util.ThreadUtil;
 public class ThreadUtilTest extends TestCase
 {
     /** Logger **/
-    private static final Category logger = 
+    private static final Category logger_ = 
         Category.getInstance(ThreadUtilTest.class);
     
     /**
@@ -66,6 +69,18 @@ public class ThreadUtilTest extends TestCase
         assertTrue("pingArgs was not executed", target.pingArgsCalled);
     }
  
+    public void testRun() throws Exception
+    {
+        Tester target = new Tester();
+        
+        PrintWriter writer = new PrintWriter(System.out);
+        Writer w2 = writer;
+        ThreadUtil.run(target, "writeDelayed", new Object[] 
+            { w2, new Integer(10), new Integer(1000), 
+                "We are coming for you!"} );        
+    } 
+ 
+ 
     /**
      * Test class for testRun()
      */   
@@ -80,7 +95,7 @@ public class ThreadUtilTest extends TestCase
         public void ping()
         {
             pingCalled = true;
-            logger.info("Called ping()");
+            logger_.info("Called ping()");
         }
         
         /**
@@ -89,8 +104,13 @@ public class ThreadUtilTest extends TestCase
         public void pingArgs(String str, String[] strArray)
         {
             pingArgsCalled = true;
-            logger.info("Called pingArgs(" + str + ", " + 
+            logger_.info("Called pingArgs(" + str + ", " + 
                 ArrayUtil.toString(strArray, false) + ")");
+        }
+        
+        public void writeDelayed(Writer pw,  Integer i, Integer i2, String s)
+        {
+            logger_.info("Called write delayed!");
         }
     }
 }
