@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
+import toolbox.util.AssertionException;
 import toolbox.util.StringUtil;
 
 /**
@@ -38,9 +39,9 @@ public class StringUtilTest extends TestCase
     }
 
     /**
-     * Tests right() and left() for proper truncation behavior
+     * Tests right() for proper truncation behavior
      */
-    public void testTruncation()
+    public void testRightForTruncation()
     {
         String s = "HELLO";
 
@@ -72,15 +73,23 @@ public class StringUtilTest extends TestCase
         {
             fail( "ERROR RIGHT 4" );
         }
+    }
 
-        a1 = "HELLO   ";
-        a2 = "HELLO333";
-        a3 = "HELLO";
-        a4 = "HELL";
-        b1 = StringUtil.left( s, 8, ' ' );
-        b2 = StringUtil.left( s, 8, '3' );
-        b3 = StringUtil.left( s, 4, ' ' );
-        b4 = StringUtil.left( s, 4, ' ', true );
+    /**
+     * Tests left() for proper truncation behavior
+     */
+    public void testLeftForTruncation()
+    {
+        String s = "HELLO";
+
+        String a1 = "HELLO   ";
+        String a2 = "HELLO333";
+        String a3 = "HELLO";
+        String a4 = "HELL";
+        String b1 = StringUtil.left( s, 8, ' ' );
+        String b2 = StringUtil.left( s, 8, '3' );
+        String b3 = StringUtil.left( s, 4, ' ' );
+        String b4 = StringUtil.left( s, 4, ' ', true );
 
         if( !a1.equals( b1 )) 
         {
@@ -128,10 +137,17 @@ public class StringUtilTest extends TestCase
      */
     public void testIsNullOrEmpty() throws Exception
     {
-        assertTrue("pass in null should return true", StringUtil.isNullOrEmpty(null));
-        assertTrue("pass in empty shoudl return true", StringUtil.isNullOrEmpty(""));
-        assertTrue("pass in space should return false", !StringUtil.isNullOrEmpty(" "));
-        assertTrue("pass in string should return false", !StringUtil.isNullOrEmpty("turbo"));
+        assertTrue("pass in null should return true", 
+            StringUtil.isNullOrEmpty(null));
+            
+        assertTrue("pass in empty shoudl return true", 
+            StringUtil.isNullOrEmpty(""));
+            
+        assertTrue("pass in space should return false", 
+            !StringUtil.isNullOrEmpty(" "));
+            
+        assertTrue("pass in string should return false", 
+            !StringUtil.isNullOrEmpty("turbo"));
     }
     
     /**
@@ -168,6 +184,98 @@ public class StringUtilTest extends TestCase
             assertTrue("ruler line 3 incorrect",
                 lnr.readLine().equals("         01234567890123456"));
         }       
+    }
+    
+    /**
+     * Tests truncate()
+     */ 
+    public void testTruncate() throws Exception
+    {
+        //======================================
+        //      STRING LENGTH = 0 
+        //======================================
+         
+        /* test empty string with zero */
+        {
+            String s = StringUtil.truncate("", 0);
+            assertEquals(s, "");
+        }
+
+        /* test empty string with one */
+        {
+            String s = StringUtil.truncate("", 1);
+            assertEquals(s, "");
+        }
+        
+        /* test empty string with many */
+        {
+            String s = StringUtil.truncate("", 50);
+            assertEquals(s, "");
+        }
+        
+        //======================================
+        //      STRING LENGTH = 1 
+        //======================================
+         
+        /* test 1 char string with zero */
+        {
+            String t = "x";
+            String s = StringUtil.truncate(t, 0);
+            assertEquals(s, "");
+        }
+
+        /* test 1 char string with one */
+        {
+            String t = "x";
+            String s = StringUtil.truncate(t, 1);
+            assertEquals(s, t);
+        }
+        
+        /* test 1 char string with many */
+        {
+            String t = "x";
+            String s = StringUtil.truncate(t, 50);
+            assertEquals(s, t);
+        }
+        
+        //======================================
+        //      STRING LENGTH > 1
+        //======================================
+        
+        /* test non-empty string with zero */
+        {
+            String t = "hello";
+            String s = StringUtil.truncate(t, 0);
+            assertEquals(s, "");
+        }
+
+        /* test non-empty string with one */
+        {
+            String t = "hello";
+            String s = StringUtil.truncate(t, 1);
+            assertEquals(s, "h");
+        }
+        
+        /* test non-empty string with many */
+        {
+            String t = "hello";
+            String s = StringUtil.truncate(t, 4);
+            assertEquals(s, "hell");
+        }
+        
+        /* test non-empty string with exact length */
+        {
+            String t = "hello";
+            String s = StringUtil.truncate(t, t.length());
+            assertEquals(s, t);
+        }
+
+        /* test non-empty string with length greater than string */
+        {
+            String t = "hello";
+            String s = StringUtil.truncate(t, 100);
+            assertEquals(s, t);
+        }
         
     }
 }
