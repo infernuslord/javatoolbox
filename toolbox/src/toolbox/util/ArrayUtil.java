@@ -1,12 +1,7 @@
 package toolbox.util;
 
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.net.*;
-
 /**
- * Array util class
+ * Array utility class
  */
 public class ArrayUtil
 {
@@ -18,23 +13,38 @@ public class ArrayUtil
     {
     }
 
+
     /**
-     *    Initializes an array of double with a given value
+     * Initializes an array of double with a given value
+     * 
+     * @param   d      Array of doubles
+     * @param   value  Initialization value
+     * @return  Initialized array of doubles
      */
     public static double[] init(double[] d, double value)
     {
-        for (int i = 0; i < d.length; d[i++] = value);
+        for (int i = 0; i < d.length; d[i++] = value)
+            ;
+
         return d;
     }
 
+
     /**
-     *    Initializes an array of ints with a given value
+     * Initializes an array of ints with a given value
+     * 
+     * @param    d      Array of ints
+     * @param    value  Initialization value
+     * @return   Initialized array of ints
      */
     public static int[] init(int[] d, int value)
     {
-        for (int i = 0; i < d.length; d[i++] = value);
+        for (int i = 0; i < d.length; d[i++] = value)
+            ;
+
         return d;
     }
+
 
     /**
      * Returns subset of a given double array
@@ -42,131 +52,123 @@ public class ArrayUtil
      * @param    array       The array to get subset of
      * @param    startIndex  The starting index (inclusive)
      * @param    endIndex    The ending index (inclusive)
-     * @return               Subset of array
+     * @return   Subset of array
      */
     public static double[] subset(double[] array, int startIndex, int endIndex)
     {
-
         int len = array.length;
 
         if (len == 0)
             return new double[0];
 
         /* do bounds checking */
-        Assert.isTrue(
-            startIndex <= endIndex,
-            "Start index " + startIndex + " must be <= end index of " + endIndex);
-        Assert.isTrue(
-            endIndex <= len,
-            "End index " + endIndex + " must be <= array length of " + len);
+        Assert.isTrue(startIndex <= endIndex, 
+                      "Start index " + startIndex + 
+                      " must be <= end index of " + 
+                      endIndex);
+                      
+        Assert.isTrue(endIndex <= len, 
+                      "End index " + endIndex + 
+                      " must be <= array length of " + len);
 
         /* copy array */
         int subLen = (endIndex - startIndex) + 1;
         double[] sub = new double[subLen];
         int s = 0;
+
         for (int i = startIndex; i <= endIndex;)
             sub[s++] = array[i++];
+
         return sub;
     }
 
+
     /**
-     * Converts an array of doubles to a string
+     * Converts an array of doubles to a string. Good for debug output.
+     * 
+     * @param    array  Array of doubles
+     * @return   String representing contents of array
      */
     public static String toString(double[] array)
     {
-
         Double[] wrapper = new Double[array.length];
+
         for (int i = 0; i < array.length; i++)
             wrapper[i] = new Double(array[i]);
+
         return toString(wrapper);
     }
 
+
     /**
-     * Converts an array of ints to a string
+     * Converts an array of ints to a string. Good for debug output
+     * 
+     * @param     array   Array of ints
+     * @return    String representing contents of array
      */
     public static String toString(int[] array)
     {
-
         Integer[] wrapper = new Integer[array.length];
+
         for (int i = 0; i < array.length; i++)
             wrapper[i] = new Integer(array[i]);
+
         return toString(wrapper);
     }
 
+
     /**
-     * Converts an object array into a comma delimited single string of each elements toString()
+     * Converts an array of objects into a comma delimited single line 
+     * string of each elements toString()
      *
      * @param    array        Array of objects to stringify
      * @return   String of comma delimited array elements toString()
      */
     public static String toString(Object[] array)
     {
-
-        StringBuffer sb = new StringBuffer("[" + array.length + "]{");
-
-        switch (array.length)
-        {
-
-            case 0 :
-
-                break;
-
-            case 1 :
-
-                sb.append(array[0].toString());
-                break;
-
-            default :
-
-                for (int i = 0; i < array.length - 1; i++)
-                {
-                    if (i != 0)
-                        sb.append(", ");
-                    sb.append(array[i].toString());
-                }
-                sb.append(", ");
-                sb.append(array[array.length - 1].toString());
-                break;
-
-        }
-
-        sb.append("}");
-        return sb.toString();
+        return toString(array, false);
     }
 
+
     /**
-     * Converts an object array into a comma delimited single string of each elements toString()
+     * Converts an object array into a comma delimited string of 
+     * each elements toString()
      *
      * @param     array        Array of objects to stringify
-     * @return    String of comma delimited array elements toString()
+     * @param     onePerLine   If true, the entire contents are represented 
+     *                          on a single line. If false, the string will
+     *                          contain one element per line.
+     * @return    Strings representation of array of objects
      */
     public static String toString(Object[] array, boolean onePerLine)
     {
-
-        StringBuffer sb = new StringBuffer("[" + array.length + "]{");
+        StringBuffer sb = new StringBuffer("[" + 
+                                           array.length + 
+                                           "]{");
 
         if (array.length > 0)
         {
-
             for (int i = 0; i < array.length - 1; i++)
             {
                 if (i != 0)
-                {
                     sb.append(", ");
-                }
 
                 if (onePerLine)
                     sb.append("\n");
 
                 sb.append(array[i].toString());
             }
+
             sb.append(", ");
+
             if (onePerLine)
                 sb.append("\n");
+
             sb.append(array[array.length - 1].toString());
         }
 
         sb.append("}");
+
         return sb.toString();
     }
 }
