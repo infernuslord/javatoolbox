@@ -1,19 +1,24 @@
 package toolbox.tail;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Category;
 
 /**
  * Tails one or more files
  */
-public class Main
+public class Main extends TailAdapter
 {
-	static final int NUM_LINES = 10;
+    private static final Category logger_ = 
+        Category.getInstance(Main.class);
 
 	/**
 	 * Entrypoint 
 	 */	
 	public static void main(String args[])
 	{
+        BasicConfigurator.configure();
 		Main tail = new Main(args);
 	}
 
@@ -35,70 +40,16 @@ public class Main
 
 		for (int i = 0; i < files.length; i++)
 		{
-			Thread t = new Thread(new TailRunner(files[i]));
-			t.start();
-		}
-	}
-
-	/**
-	 * Runner for each tail
-	 */
-	class TailRunner implements Runnable
-	{
-		String _filename;
-
-		/**
-		 * Creates a TailRunner
-		 * 
-		 * @arg  filename   Name of file to tail
-		 */
-		public TailRunner(String filename)
-		{
-			_filename = filename;
-		}
-
-		/**
-		 * Runnable interface 
-		 */
-		public void run()
-		{
-			try
-			{
-				FileReader fr = new FileReader(_filename);
-				LineNumberReader lnr = new LineNumberReader(fr);
-
-				int cnt = 0;
-				lnr.mark(1000);
-
-				synchronized (TailRunner.class)
-				{
-					while (lnr.ready())
-					{
-						cnt++;
-						if ((cnt % Main.NUM_LINES) == 0)
-							lnr.mark(1000);
-						lnr.readLine();
-					}
-				}
-
-				lnr.reset();
-
-				while (true)
-				{
-					if (lnr.ready())
-					{
-						String line = lnr.readLine();
-						if (line != null)
-							System.out.println(line);
-					}
-					Thread.currentThread().sleep(1);
-				}
-			}
-			catch (Exception e)
-			{
-				System.out.println(e);
-				e.printStackTrace();
-			}
+            try
+            {
+                Tail tail = new Tail();
+                tail.addTailListener(this);
+                tail.tail(files[i]);
+            }
+            catch (FileNotFoundException fnfe)
+            {
+                logger_.error("constructor", fnfe);
+            }
 		}
 	}
 
@@ -111,4 +62,9 @@ public class Main
 		System.out.println("Usage   : java toolbox.tail.Main [file1 file2 ... file8]");
 		System.out.println("Example : java toolbox.tail.Main appserver.log");
 	}
+    
+    public void nextLine(String line)
+    {
+        System.out.println(line);
+    }
 }
