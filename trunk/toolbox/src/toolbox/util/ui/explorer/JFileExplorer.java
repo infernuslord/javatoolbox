@@ -494,7 +494,7 @@ public class JFileExplorer extends JPanel
     	 */
         public IconCellRenderer()
         {
-            setOpaque(true);
+            this.setOpaque(true);
         }
 
         /**
@@ -516,8 +516,8 @@ public class JFileExplorer extends JPanel
             	logger.fatal("getListCellRenderer", e);
             }
             
-            setBackground(isSelected ? Color.blue : Color.white);
-            setForeground(isSelected ? Color.white : Color.black);
+            this.setBackground(isSelected ? Color.blue : Color.white);
+            this.setForeground(isSelected ? Color.white : Color.black);
             return this;
         }
     }
