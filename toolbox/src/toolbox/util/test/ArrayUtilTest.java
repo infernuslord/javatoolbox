@@ -10,6 +10,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
 
 import toolbox.util.ArrayUtil;
+import toolbox.util.StringUtil;
 
 
 /**
@@ -169,4 +170,76 @@ public class ArrayUtilTest extends TestCase
         String[] s = new String[0];
         logger.info("[toStr1] " + ArrayUtil.toString(s));
     }
+    
+    /**
+     * Tests indexOf() for an empty array 
+     */
+    public void testIndexOfEmpty() throws Exception
+    {
+        String strArray[] = new String[0];
+        String s = "duke";
+        
+        int idx = ArrayUtil.indexOf(strArray, s);
+        
+        assertTrue("Array is empty", idx == -1);
+    }
+
+    /**
+     * Tests indexOf() for an array of length 1
+     */
+    public void testIndexOfOne() throws Exception
+    {
+        String   s = "duke";
+        String[] strArray = new String[] { s };
+        
+        
+        int idx = ArrayUtil.indexOf(strArray, s);
+        
+        assertEquals("Found at wrong index", 0, idx);
+    }
+
+    /**
+     * Tests indexOf() for an array of length 1 where obj not found
+     */
+    public void testIndexOfOneNotFound() throws Exception
+    {
+        String   s = "duke";
+        String[] strArray = new String[] { "java" };
+        
+        
+        int idx = ArrayUtil.indexOf(strArray, s);
+        
+        assertEquals("Should not have found a match", -1, idx);
+    }
+
+    /**
+     * Tests indexOf() for an array of length > 1
+     */
+    public void testIndexOfMany() throws Exception
+    {
+        String   two = "two";
+        
+        String[] strArray = 
+            new String[] { "zero", "one", two, "three", "four" };
+        
+        int idx = ArrayUtil.indexOf(strArray, two);
+        
+        assertEquals("Found at wrong index", 2, idx);
+    }
+
+    /**
+     * Tests indexOf() for an array of length > 1 where obj not found
+     */
+    public void testIndexOfManyNotFound() throws Exception
+    {
+        String   notFound = "notFound";
+        
+        String[] strArray = 
+            new String[] { "zero", "one", "two", "three", "four" };
+        
+        int idx = ArrayUtil.indexOf(strArray, notFound);
+        
+        assertEquals("Should not have found a match", -1, idx);
+    }
+    
 }
