@@ -173,9 +173,9 @@ public class ArrayUtil
      *
      * @param     array        Array of objects to stringify
      * @param     onePerLine   If true, the entire contents are represented 
-     *                          on a single line. If false, the string will
-     *                          contain one element per line.
-     * @return    Strings representation of array of objects
+     *                         on a single line. If false, the string will
+     *                         contain one element per line.
+     * @return    String representation of array of objects
      */
     public static String toString(Object[] array, boolean onePerLine)
     {
@@ -207,5 +207,34 @@ public class ArrayUtil
         sb.append("}");
 
         return sb.toString();
+    }
+
+    
+    /**
+     * Determines if an object exists in a given array of objects.
+     * Uses equals() for comparison.
+     * 
+     * @param    array   Array of objects to search
+     * @param    obj     Object to search for
+     * @return   -1 if the object is not found, otherwise the index
+     *           of the first matching object
+     */
+    public static int indexOf(Object[] array, Object obj)
+    {
+        if (array.length == 0)
+            return -1;
+            
+        boolean found = false;
+        int idx = 0;
+        
+        while (idx < array.length)
+        {
+            if (obj.equals(array[idx]))
+                return idx;
+            else
+                idx++;
+        }
+                
+        return -1;
     }
 }
