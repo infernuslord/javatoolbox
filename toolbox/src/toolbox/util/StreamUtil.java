@@ -10,7 +10,6 @@ import java.util.List;
  */
 public class StreamUtil
 {
-
 	/**
 	 * Prevent construction
 	 */
@@ -25,7 +24,7 @@ public class StreamUtil
 	 * @return     String representation of the input stream contents.
 	 * @exception  IOException
 	 */
-	public static String toString(InputStream inputStream) throws IOException
+	public static String asString(InputStream inputStream) throws IOException
 	{
 		return new String(toBytes(inputStream));
 	}
