@@ -36,14 +36,13 @@ public class SocketUtil
     /**
      * Establishes a connection to a server socket with a retry strategy
      * 
-     * @param   hostname   Host to connect to
-     * @param   port       Port to connect to
-     * @param   interval   Retry interval in seconds. Zero = no interval
-     * @param   maxRetries Maximum number of times to retry. Zero = infinite
-     * 
+     * @param   hostname      Host to connect to
+     * @param   port          Port to connect to
+     * @param   interval      Retry interval in seconds. Zero = no interval
+     * @param   maxRetries    Maximum number of times to retry. Zero = infinite
      * @return  Socket if connection succeeded, null otherwise
-     * @throws  IOException
-     * @throws  UnknownHostException
+     * @throws  IOException if an error occurs
+     * @throws  UnknownHostException if host not found/resolvable
      */
     public static Socket connectWithRetry(String hostname, int port, 
         int interval, int maxRetries) throws IOException, UnknownHostException
