@@ -234,5 +234,21 @@ public final class StringUtil
 
         return sb.toString();
     }
+    
+    /**
+     * Truncate a string to the given length.
+     * If s.length() <= n, returns s.
+     * Else, returns the first n characters of s.
+     * 
+     * @param  s   String to truncate
+     * @param  n   Length to truncate to
+     * @return String
+     */
+    public static String truncate(String s, int n)
+    {
+        if (s.length() <= n)
+            return s;
+        else
+            return s.substring(0, n);    
+    }    
 }
-
