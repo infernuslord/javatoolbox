@@ -14,7 +14,8 @@ import org.apache.log4j.Category;
 public final class ResourceUtil
 {
 	// Singleton instance of the Stream Resource Manager logger.
-	public static final Category logger = Category.getInstance(ResourceUtil.class);
+	public static final Category logger = 
+        Category.getInstance(ResourceUtil.class);
 
 	/**
 	 * Locates a resource with the given name using an exhaustive
