@@ -1,5 +1,7 @@
 package toolbox.launcher;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import toolbox.util.ArrayUtil;
@@ -56,11 +58,62 @@ public class Main
                 break;
                 
             default :
-                launch(ArrayUtil.s
+            	
+            	if (!programMap.containsKey(args[0]))
+            		printUsage();
+            	else
+            	{
+            		String[] newArgs = new String[0];
+            		
+            		if(args.length > 1)
+            			newArgs = (String[]) ArrayUtil.subset(args, 1, args.length - 1);
+            			
+                	launch((String)programMap.get(args[0]), newArgs);
+            	} 
                 break;
         }
         
     }
+    
+    /**
+     * Launches the programs 
+     */
+  	protected void launch(String className, String[] args)
+  	{
+  		
+  		try 
+  		{
+			Class c = Class.forName(className);
+	  		Method m = c.getMethod("main", new Class[] { (new String[0]).getClass() });
+	  		m.invoke(null, new Object[] { args } );
+		} 
+		catch(SecurityException e) 
+		{
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		} 
+		catch(ClassNotFoundException e) 
+		{
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		} 
+		catch(NoSuchMethodException e) 
+		{
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}
+		catch(IllegalAccessException e) 
+		{
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		} 
+		catch(InvocationTargetException e) 
+		{
+			System.out.println("Error: " + e);
+			e.printStackTrace();
+		}		
+  	}
+    
     
     /**
      * Prints launcher usage
