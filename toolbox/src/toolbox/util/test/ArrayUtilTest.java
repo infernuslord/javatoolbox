@@ -48,7 +48,7 @@ public class ArrayUtilTest extends TestCase
     /**
      * Test subset() for subset equal to array
      */
-    public void testSubsetAll() throws Exception
+    public void testSubsetDoubleAll() throws Exception
     {
         int len = 10;
         double[] d = new double[len];
@@ -68,7 +68,7 @@ public class ArrayUtilTest extends TestCase
     /**
      * Test subset() for empty array
      */
-    public void testSubsetEmpty() throws Exception
+    public void testSubsetDoubleEmpty() throws Exception
     {
         double[] d = new double[0];
         double[] e = ArrayUtil.subset(d, 0, 0);
@@ -79,7 +79,7 @@ public class ArrayUtilTest extends TestCase
     /**
      * Test subset() for subset first half of array
      */
-    public void testSubsetFirstHalf() throws Exception
+    public void testSubsetDoubleFirstHalf() throws Exception
     {
         int len = 10;
         double[] d = new double[len];
@@ -99,7 +99,7 @@ public class ArrayUtilTest extends TestCase
     /**
      * Test subset() for array of length 1
      */
-    public void testSubsetOne() throws Exception
+    public void testSubsetDoubleOne() throws Exception
     {
         double[] d = new double[]{99};
         double[] e = ArrayUtil.subset(d, 0, 0);
@@ -111,7 +111,7 @@ public class ArrayUtilTest extends TestCase
     /**
      * Test subset() for subset second half of the array
      */
-    public void testSubsetSecondHalf() throws Exception
+    public void testSubsetDoubleSecondHalf() throws Exception
     {
         int len = 10;
         double[] d = new double[len];
@@ -132,13 +132,63 @@ public class ArrayUtilTest extends TestCase
         }
     }
 
+    /**
+     * Test subset(Object[]) for all
+     */
+    public void testSubsetObjectAll() throws Exception
+    {
+        String method = "[subObj] ";
+        
+        String[] objs = new String[] { "zero", "one", "two", "three" };
+        
+        String[] subset = (String[]) ArrayUtil.subset(objs, 1, 2);
+        
+        logger.info(method + ArrayUtil.toString(objs));
+        logger.info(method + ArrayUtil.toString(subset));
+        
+        assertEquals("first index is incorrect", "one", subset[0]);
+        assertEquals("second index is incorrect", "two", subset[1]);
+    }
 
+
+    /**
+     * Test subset(Object[]) for empty array of objects
+     */
+    public void testSubsetObjectEmpty() throws Exception
+    {
+        String[] d = new String[0];
+        String[] e = (String[]) ArrayUtil.subset(d, 0, 0);
+        assertEquals("subset should be empty", 0, e.length);
+    }
+
+
+    /**
+     * Test subset(Object[]) for array of length 1
+     */
+    public void testSubsetObjectOne() throws Exception
+    {
+        String[] d = new String[] { "a", "b", "c" };
+        String[] e = (String[])ArrayUtil.subset(d, 0, 0);
+        assertEquals("subset should have one element", 1, e.length);
+        assertEquals("values don't match", "a", e[0]);
+        
+        e = (String[])ArrayUtil.subset(d, 1, 1);
+        assertEquals("subset should have one element", 1, e.length);
+        assertEquals("values don't match", "b", e[0]);
+        
+        e = (String[])ArrayUtil.subset(d, 2, 2);
+        assertEquals("subset should have one element", 1, e.length);
+        assertEquals("values don't match", "c", e[0]);
+    }
+
+        
     /**
      * Tests toString()
      */
     public void testToString()
     {
-        String[] s = new String[]{
+        String[] s = new String[]
+        {
             "one", "two", "three", "four", "five", "six", "seven", "eight", 
             "nine", "ten"
         };
