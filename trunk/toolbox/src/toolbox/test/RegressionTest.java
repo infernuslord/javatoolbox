@@ -35,7 +35,7 @@ public class RegressionTest
     public static Test suite()
     {
         BasicConfigurator.configure();
-        
+                
         TestSuite suite = new TestSuite();
          
         // util
@@ -46,7 +46,7 @@ public class RegressionTest
         suite.addTest(new TestSuite(FileUtilTest.class));
         suite.addTest(new TestSuite(AssertTest.class));
         suite.addTest(new TestSuite(StringUtilTest.class));
-                
+        
         // util.io
         suite.addTest(new TestSuite(StringInputStreamTest.class));
         suite.addTest(new TestSuite(StringOutputStreamTest.class));        

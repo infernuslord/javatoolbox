@@ -1,27 +1,14 @@
 package toolbox.findclass;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
 import toolbox.util.ArrayUtil;
-import toolbox.util.StringUtil;
 
 /**
  * Utility that finds all occurences of a given class in the 
  * CLASSPATH, current directory, and archives (recursively)
  */
-public class Main 
+public class Main implements IFindClassListener
 { 
     /** Logger **/
     private static final Category logger_ = Category.getInstance(Main.class);
@@ -40,6 +27,7 @@ public class Main
         BasicConfigurator.configure();
         
         FindClass finder = new FindClass();
+        finder.addFindClassListener(new Main());
         String classToFind;
         boolean ignoreCase;
 
@@ -60,7 +48,8 @@ public class Main
                 
                 case  0: classToFind = args[1]; 
                          ignoreCase = false;
-                         finder.findClass(classToFind, ignoreCase);                
+                         finder.findClass(classToFind, ignoreCase);
+                         break;                
                 
                 case  1: classToFind = args[0]; 
                          ignoreCase = false;
@@ -83,5 +72,17 @@ public class Main
         System.out.println();
         System.out.println("Usage  : java toolbox.findclass.Main -cs <regular expression>");
         System.out.println("Options: -cs => Case sensetive search");
+    }
+ 
+    /**
+     * Implemenation of IFindClassListener
+     * 
+     * @param  searchResult  Results of class that was found.
+     */   
+    public void classFound(FindClassResult searchResult)
+    {
+        System.out.println(
+            searchResult.getClassLocation() + " => " + 
+            searchResult.getClassFQN());   
     }
 }
