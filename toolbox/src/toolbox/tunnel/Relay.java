@@ -1,10 +1,12 @@
 package toolbox.tunnel;
 
+import java.awt.TextArea;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2000 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +14,7 @@ package toolbox.tunnel;
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -20,7 +22,7 @@ package toolbox.tunnel;
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -28,7 +30,7 @@ package toolbox.tunnel;
  *
  * 4. The names "SOAP" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -56,48 +58,61 @@ package toolbox.tunnel;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 import java.io.*;
+
 import java.net.*;
-import java.awt.TextArea;
+
 
 /**
  * A <code>Relay</code> object is used by <code>TcpTunnel</code>
  * and <code>TcpTunnelGui</code> to relay bytes from an
  * <code>InputStream</code> to a <code>OutputStream</code>.
- *
- * @author Sanjiva Weerawarana (sanjiva@watson.ibm.com)
  */
-public class Relay extends Thread {
-  final static int BUFSIZ = 1000;
-  InputStream in;
-  OutputStream out;
-  byte buf[] = new byte[BUFSIZ];
-  TextArea ta;
+public class Relay extends Thread
+{
+    final static int BUFSIZ = 1000;
+    InputStream in;
+    OutputStream out;
+    byte[] buf = new byte[BUFSIZ];
+    TextArea ta;
 
-  Relay (InputStream in, OutputStream out, TextArea ta) {
-    this.in = in;
-    this.out = out;
-    this.ta = ta;
-  }    
-  public void run () {
-    int n;
+    Relay(InputStream in, OutputStream out, TextArea ta)
+    {
+        this.in = in;
+        this.out = out;
+        this.ta = ta;
+    }
 
-    try {
-      while ((n = in.read (buf)) > 0) {
-    out.write (buf, 0, n);
-    out.flush ();
-    if (ta != null) {
-      ta.append (new String (buf, 0, n));
+    public void run()
+    {
+        int n;
+
+        try
+        {
+            while ((n = in.read(buf)) > 0)
+            {
+                out.write(buf, 0, n);
+                out.flush();
+
+                if (ta != null)
+                {
+                    ta.append(new String(buf, 0, n));
+                }
+            }
+        }
+        catch (IOException e)
+        {
+        }
+        finally
+        {
+            try
+            {
+                in.close();
+                out.close();
+            }
+            catch (IOException e)
+            {
+            }
+        }
     }
-      }
-    } catch (IOException e) {
-    } finally {
-      try {
-    in.close ();
-    out.close ();
-      } catch (IOException e) {
-      }
-    }
-  }    
 }

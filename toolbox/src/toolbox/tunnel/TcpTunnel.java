@@ -19,7 +19,8 @@ public class TcpTunnel
 
         if (args.length != 3)
         {
-            System.err.println("Usage: java " + TcpTunnel.class.getName() + " listenport tunnelhost tunnelport");
+            System.err.println("Usage: java " + TcpTunnel.class.getName() + 
+                               " listenport tunnelhost tunnelport");
             System.exit(1);
         }
 
@@ -39,13 +40,9 @@ public class TcpTunnel
             // connect to the thing I'm tunnelling for
             Socket st = new Socket(tunnelhost, tunnelport);
 
-            System.out.println(
-                "TcpTunnel: tunnelling port "
-                    + listenport
-                    + " to port "
-                    + tunnelport
-                    + " on host "
-                    + tunnelhost);
+            System.out.println("TcpTunnel: tunnelling port " + listenport + 
+                               " to port " + tunnelport + " on host " + 
+                               tunnelhost);
 
             // relay the stuff thru
             new Relay(sc.getInputStream(), st.getOutputStream(), null).start();
