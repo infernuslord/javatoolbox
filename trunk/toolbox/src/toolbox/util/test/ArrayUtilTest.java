@@ -15,22 +15,16 @@ import toolbox.util.ArrayUtil;
 /**
  * ArrayUtil unit test class
  */
-public class ArrayUtilTest
-    extends TestCase
+public class ArrayUtilTest extends TestCase
 {
     
     /** Logger **/
     private static final Category logger = 
         Category.getInstance(ArrayUtilTest.class);
 
-    static
-    {
-        BasicConfigurator.configure();
-    }
-
     /**
      * ArrayUtilTest constructor
-     * 
+     *  
      * @param aName String
      */
     public ArrayUtilTest(String aName)
@@ -46,22 +40,9 @@ public class ArrayUtilTest
      */
     public static void main(String[] args)
     {
-        TestRunner tr = new TestRunner();
-        tr.run(ArrayUtilTest.class);
+        BasicConfigurator.configure();
+        TestRunner.run(ArrayUtilTest.class);
     }
-
-
-    /**
-     * A method that the JUnit framework calls via reflection
-     * to return the class' entire test suite.
-     *
-     * @return The class' test suite.
-     */
-    public static Test suite()
-    {
-        return new TestSuite(ArrayUtilTest.class);
-    }
-
 
     /**
      * Test subset() for subset equal to array
