@@ -27,23 +27,6 @@ public class StreamUtil
 	 */
 	public static String toString(InputStream inputStream) throws IOException
 	{
-//		try
-//		{
-//			//inputStream.reset();
-//			int c;
-//			StringBuffer sb = new StringBuffer();
-//			while ((c = inputStream.read()) != -1)
-//				sb.append(c);
-//			return sb.toString();
-//		}
-//		catch (IOException e)
-//		{
-//			throw new RuntimeException(e.toString());
-//		}
-//		finally
-//		{
-//		}
-
 		return new String(toBytes(inputStream));
 	}
 
