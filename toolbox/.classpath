@@ -3,6 +3,6 @@
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="src"/>
     <classpathentry kind="lib" path="lib/junit.jar"/>
-    <classpathentry kind="lib" path="lib/log4j.jar"/>
+    <classpathentry kind="lib" path="lib/log4j.jar" rootpath="java" sourcepath="G:/java/dev/jakarta-log4j-1.1.3/Src.zip"/>
     <classpathentry kind="output" path="classes"/>
 </classpath>
