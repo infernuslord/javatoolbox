@@ -7,29 +7,43 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Category;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
+import toolbox.util.StringUtil;
+
 /**
  * Utility that finds all occurences of a given class in the 
- * CLASSPATH and the current directory 
+ * CLASSPATH, current directory, and archives (recursively)
  */
 public class Main 
 { 
-    private String      classToFind = "";          
-    private String[]    classpath;
-    private boolean     wildCard = false;
-    private Vector      classFileList = new Vector();
+    /** Logger **/
+    private static final Category logger_ = Category.getInstance(Main.class);
+    
+    private String      classToFind_ = "";          
+    private String[]    classpath_;
+    private boolean     useRegExp_ = false;
+    private List        classFileList = new ArrayList();
     private String      fileSeparator = System.getProperty("file.separator");
 
     /* File filters */
-    private FilenameFilter jarFilter       = new ExtensionFilter(".jar");
-    private FilenameFilter zipFilter       = new ExtensionFilter(".zip");
-    private FilenameFilter classFilter     = new ExtensionFilter(".class");
-    private FilenameFilter archiveFilter   = new CompositeFilter(jarFilter, zipFilter);
-    private FilenameFilter directoryFilter = new DirectoryFilter();
-    
+    private FilenameFilter jarFilter_       = new ExtensionFilter(".jar");
+    private FilenameFilter zipFilter_       = new ExtensionFilter(".zip");
+    private FilenameFilter classFilter_     = new ExtensionFilter(".class");
+    private FilenameFilter archiveFilter_   = new CompositeFilter(jarFilter_, zipFilter_);
+    private FilenameFilter directoryFilter_ = new DirectoryFilter();
+
+    /* if this system property is set to anything, then debug output will be generated */    
+    private static final String debugProp_ = "findclass.debug";
+
+    /** regular expression matcher **/
+    private RE regExp_;
+        
     /**
      * FindClass entry point
      * 
@@ -37,14 +51,42 @@ public class Main
      */
     public static void main(String args[])
     {
+        /* init log4j */
+        BasicConfigurator.configure();
+        
+        if (System.getProperty(debugProp_) == null)
+            Category.getDefaultHierarchy().disableDebug();
+        
+        String regExpFlag = "-re";
+        String classToFind;
+        boolean useRegExp;
+        
         if (args.length == 1) 
         {
-            Main findClass = new Main(args[0], true);
+            classToFind = args[0];
+            useRegExp = false;
+            
+            new Main(classToFind, useRegExp);
+        }
+        else if (args.length == 2)
+        {
+            if (args[0].equals(regExpFlag))
+            {
+                useRegExp = true;
+                classToFind = args[1];
+                new Main(classToFind, useRegExp);                
+            }
+            else if (args[1].equals(regExpFlag))
+            {
+                useRegExp = true;
+                classToFind = args[0];                   
+                new Main(classToFind, useRegExp);                
+            }
+            else
+                printUsage();
         }
         else 
-        {
             printUsage();
-        }
     }
 
     /**
@@ -52,34 +94,45 @@ public class Main
      */
     private static void printUsage()
     {
-        System.out.println("FindClass searches for all occurrences of a class in the following order:");
-        System.out.println("  1. Directories in the CLASSPATH");
-        System.out.println("  2. Archives (zip & jar) in the CLASSPATH");
-        System.out.println("  3. Archives in the current directory");
-        System.out.println("  4. Archives in all recursed directories");            
+        System.out.println("FindClass searches for all occurrences of a class in");
+        System.out.println("your classpath and archives visible from the current");
+        System.out.println("directory.");
         System.out.println();
-        System.out.println("The class name is assumed to be a case-insensetive wildcard and");
-        System.out.println("will match any string in a fully qualified class name.");
-        System.out.println();
-        System.out.println("Usage  : java toolbox.findclass.Main <class name>");
-        System.out.println();
+        System.out.println("Usage  :                                                             ");
+        System.out.println("  java toolbox.findclass.Main <class name> | [-re <regular expression>]");
+        
+        /*
         System.out.println("Example: To find the class java.lang.Object");
         System.out.println("         java toolbox.findclass.Main java.lang.Object");
         System.out.println();
         System.out.println("Example: Find all classes which contain the string 'String'");         
         System.out.println("         java toolbox.findclass.Main String");
+        */
     }
 
     /**
      * Constructor
      * 
      * @param   classToFind     the name of class to find
-     * @param   wildcard        turns on wildcard search
+     * @param   useRegExp       turns on regular expression search
      */
-    public Main(String classToFind, boolean wildCard) 
+    public Main(String classToFind, boolean useRegExp) 
     { 
-        setWildCard( wildCard );
-        setClassToFind( classToFind );
+        /* set arguments */
+        useRegExp_   = useRegExp;
+        classToFind_ = classToFind;
+
+        try
+        {
+            /* setup regexp based on flag */                    
+            regExp_ = new RE(classToFind_);
+            if (!useRegExp_)
+                regExp_.setMatchFlags(RE.MATCH_CASEINDEPENDENT);        
+        }
+        catch (RESyntaxException e)
+        {
+            logger_.error("constructor", e);
+        }
 
         /* build list of archives and dirs to search */        
         List searchList = new ArrayList();
@@ -87,11 +140,20 @@ public class Main
         searchList.addAll(getArchiveTargets());
 
 		/* convert search list to an array */
-        String dirs[] = (String[])searchList.toArray(new String[0]);
+        classpath_ = (String[])searchList.toArray(new String[0]);
         
+        if (logger_.isDebugEnabled())
+        {
+            logger_.debug("Search targets");
+            logger_.debug("==============================");
+            
+            for(int i=0; i < classpath_.length; i++)
+                logger_.debug(classpath_[i]);
+
+            logger_.debug("==============================");                
+        }
         /* yee haw! */
-        setClassPath(dirs);
-        findClass(getClassToFind());
+        findClass(classToFind_);
     }
 
     /**
@@ -159,7 +221,7 @@ public class Main
         public boolean accept(File dir,String name)
         {
             return firstFilter.accept(dir, name) || 
-                    secondFilter.accept(dir, name);
+                   secondFilter.accept(dir, name);
         }
     }
 
@@ -214,7 +276,7 @@ public class Main
      */
     protected List getArchiveTargets()
     {
-        return findFilesRecursively(".", archiveFilter);        
+        return findFilesRecursively(".", archiveFilter_);        
     }
 
     /**
@@ -246,7 +308,7 @@ public class Main
             }
             
             /* process directories */
-            String[] dirs  = f.list(directoryFilter);
+            String[] dirs  = f.list(directoryFilter_);
                         
             for(int i=0; i<dirs.length; i++)
             {
@@ -267,20 +329,17 @@ public class Main
     { 
         try 
         { 
-            String[] c = getClassPath();
-
-            for (int i=0; i< c.length; i++) 
+            for (int i=0; i< classpath_.length; i++) 
             { 
-                if (isArchive( c[i]))
-                    findInArchive(c[i]);
+                if (isArchive(classpath_[i]))
+                    findInArchive(classpath_[i]);
                 else
-                    findInPath(c[i]);
+                    findInPath(classpath_[i]);
             }
         }
         catch (Exception e) 
         { 
-            System.out.println("Exception: " + e.toString());
-            e.printStackTrace();
+            logger_.error("findclass", e);
         }
     }
     
@@ -299,10 +358,10 @@ public class Main
         }
         catch (Exception e) 
         { 
-            System.out.println("*** Could not find or open " + jarName + "!!!! ***");
+            System.out.println("Error: Could not locate " + jarName + ".");
             return;
         }
-
+        
         for (Enumeration e = zf.entries(); e.hasMoreElements();) 
         { 
             ZipEntry ze = (ZipEntry) e.nextElement();
@@ -312,19 +371,8 @@ public class Main
                 String name = ze.getName().replace('/', '.');
                 name = name.substring(0, name.length() - ".class".length());
 
-                //System.out.println("Converted=" + name + "]");
-
-                if (!useWildCard()) 
-                { 
-                    if (name.equals(getClassToFind()))
-                        classFound(getClassToFind(),jarName);
-                }
-                else 
-                {
-                    // case insensetive substring match
-                    if (name.toUpperCase().indexOf(getClassToFind().toUpperCase()) != -1 )
-                        classFound(name,jarName);
-                }
+                if (regExp_.match(name))
+                    classFound(name, jarName);
             }
         }
         zf.close();
@@ -341,32 +389,36 @@ public class Main
         if (!pathName.endsWith( fileSeparator ))
             pathName += fileSeparator;
 
-        if (!useWildCard()) 
+        /*
+        if (!useRegExp_) 
         { 
-            /* exact search */
+            // exact search 
             char c = fileSeparator.charAt(0);
-            String s = getClassToFind().replace('.', c );
+            String s = classToFind_.replace('.', c );
             pathName += s;
             pathName += ".class";
 
             File f = new File(pathName);
             if (f.exists())
-                classFound(getClassToFind(), pathName);
+                classFound(classToFind_, pathName);
         }
         else  
+        */
+        
         { 
-            /* wildcard search */
-            List classFiles = findFilesRecursively(pathName, classFilter);
+            /* regular expression search */
+            List classFiles = findFilesRecursively(pathName, classFilter_);
             
             for(Iterator i = classFiles.iterator(); i.hasNext(); )
             {
-                String fileMixed = (String)i.next();
-                String fileLower = fileMixed.toLowerCase();
-                String findMixed = getClassToFind();
-                String findLower = findMixed.toLowerCase();
+                String fileName = (String)i.next();
+                String dotted= fileName.replace(File.separatorChar, '.');
+                dotted = StringUtil.truncate(dotted, fileName.length() - ".class".length());
                 
-                if (fileLower.indexOf(findLower) >= 0)
-                    classFound(fileMixed, findMixed);
+                logger_.debug("file=" + dotted);
+                
+                if (regExp_.match(dotted))
+                    classFound(fileName, classToFind_);
             }
         }
     }
@@ -383,26 +435,6 @@ public class Main
     }
     
     /**
-     * Accessor for the classpath
-     * 
-     * @return  array of entries contained in the classpath
-     */
-    protected String[] getClassPath() 
-    { 
-        return classpath;
-    }
-    
-    /**
-     * Accessor for the name of the class to find
-     * 
-     * @return  the name of the class to find
-     */
-    protected String getClassToFind() 
-    { 
-        return classToFind;
-    }
-    
-    /**
      * Determines whether a given file is a java archive
      * 
      * @param   s   absolute name of the java archive
@@ -415,45 +447,5 @@ public class Main
             return true;
         else
             return false;
-    }
-   
-    /**
-     * Mutator for the classpath
-     * 
-     * @param   s   array of entries in the classpath
-     */
-    protected void setClassPath( String[] s ) 
-    { 
-        classpath = s;
-    }
-    
-    /**
-     * Mutator for the name of the class to find
-     * 
-     * @param   s   the name of the class to find
-     */
-    protected void setClassToFind( String s ) 
-    { 
-        classToFind = s;
-    }
-    
-    /**
-     * Mutator for the wildcard flag
-     * 
-     * @param   b     turns wildcard searh on
-     */
-    protected void setWildCard( boolean b ) 
-    { 
-        wildCard = b;
-    }
-    
-    /**
-     * Accessor for the wildcard flag
-     * 
-     * @return  true if wildcard search turned on, false otherwise
-     */
-    protected boolean useWildCard() 
-    { 
-        return wildCard;
     }
 }
