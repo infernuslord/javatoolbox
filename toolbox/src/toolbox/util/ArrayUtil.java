@@ -82,6 +82,43 @@ public class ArrayUtil
         return sub;
     }
 
+    /**
+     * Returns subset of a given array of objects
+     * 
+     * @param    array       The array to get subset of
+     * @param    startIndex  The starting index (inclusive)
+     * @param    endIndex    The ending index (inclusive)
+     * @return   Subset of array
+     */
+    public static Object[] subset(Object[] array, int startIndex, int endIndex)
+    {
+        int len = array.length;
+
+        if (len == 0)
+            return new Object[0];
+
+        /* do bounds checking */
+        Assert.isTrue(startIndex <= endIndex, 
+                      "Start index " + startIndex + 
+                      " must be <= end index of " + 
+                      endIndex);
+                      
+        Assert.isTrue(endIndex <= len, 
+                      "End index " + endIndex + 
+                      " must be <= array length of " + len);
+
+        /* copy array */
+        int subLen = (endIndex - startIndex) + 1;
+        Object[] sub = new Object[subLen];
+        int s = 0;
+
+        for (int i = startIndex; i <= endIndex;)
+            sub[s++] = array[i++];
+
+        return sub;
+    }
+
+
 
     /**
      * Converts an array of doubles to a string. Good for debug output.
