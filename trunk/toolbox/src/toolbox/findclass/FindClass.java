@@ -243,7 +243,7 @@ public class FindClass
                 name = name.substring(0, name.length() - ".class".length());
 
                 if (regExp_.match(name))
-                    fireClassFound(name, jarName);
+                    fireClassFound(jarName, name);
             }
         }
         zf.close();
@@ -273,7 +273,7 @@ public class FindClass
             logger_.debug("file=" + dotted);
             
             if (regExp_.match(dotted))
-                fireClassFound(fileName, classToFind_);
+                fireClassFound(pathName, dotted);
         }
     }
     
