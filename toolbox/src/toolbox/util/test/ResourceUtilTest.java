@@ -1,5 +1,7 @@
 package toolbox.util.test;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import org.apache.log4j.BasicConfigurator;
@@ -10,18 +12,13 @@ import toolbox.util.ResourceUtil;
  */
 public class ResourceUtilTest extends TestCase
 {
-	static
-	{
-		BasicConfigurator.configure();
-	}
-	
 	/**
 	 * Entrypoint
 	 */
     public static void main(String[] args)
     {
-    	TestRunner tr = new TestRunner();
-    	tr.run(ResourceUtilTest.class);	
+        BasicConfigurator.configure();        
+    	TestRunner.run(ResourceUtilTest.class);	
     }
 	
     /**
@@ -38,9 +35,9 @@ public class ResourceUtilTest extends TestCase
      */
     public void testExportToClass() throws Exception
     {
-		String treeOpen = "tree_open.gif";
-		String treeClose = "tree_close.gif";
-		String cdrive = "cdrive.gif";
+		String treeOpen  = "images" + File.separator + "tree_open.gif";
+		String treeClose = "images" + File.separator + "tree_close.gif";
+		String cdrive    = "images" + File.separator + "cdrive.gif";
 		
 		ResourceUtil.exportToClass(treeOpen, "toolbox.util.ui", "TreeOpenGIF");    	
 		ResourceUtil.exportToClass(treeClose, "toolbox.util.ui", "TreeCloseGIF");
