@@ -37,5 +37,10 @@ public class FindClassResult
     {
         return classFQN_;
     }
+    
+    public String toString()
+    {
+        return classLocation_ + " => " + classFQN_;
+    }
         
 }
