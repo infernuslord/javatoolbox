@@ -4,7 +4,8 @@ import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import org.apache.log4j.BasicConfigurator;
 import toolbox.findclass.FindClass;
-import toolbox.findclass.FindClassCollector;
+import toolbox.findclass.FindClassResult;
+import toolbox.util.ArrayUtil;
 
 /**
  * Unit test for findclass
@@ -36,13 +37,9 @@ public class FindClassTest extends TestCase
     public void testFindInJar() throws Exception
     {
         FindClass finder = new FindClass();
-        FindClassCollector collector = new FindClassCollector();
-        finder.addFindClassListener(collector);
+        FindClassResult[] results = finder.findClass("Info$", false);
         
-        finder.findClass("Info$", false);
-        
-        
-        
+        System.out.println(ArrayUtil.toString(results, true));
     }
 
 }
