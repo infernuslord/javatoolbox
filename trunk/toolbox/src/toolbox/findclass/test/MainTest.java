@@ -3,6 +3,7 @@ package toolbox.findclass.test;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import org.apache.log4j.BasicConfigurator;
+import toolbox.findclass.Main;
 
 /**
  * Unit test for findclass
@@ -33,6 +34,7 @@ public class MainTest extends TestCase
      */
     public void testFindInJar() throws Exception
     {
+        Main.main(new String[] {  "filter$" } );
     }
 
 }
