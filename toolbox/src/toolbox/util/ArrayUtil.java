@@ -1,5 +1,7 @@
 package toolbox.util;
 
+import java.lang.reflect.Array;
+
 /**
  * Array utility class
  */
@@ -92,30 +94,35 @@ public class ArrayUtil
      */
     public static Object[] subset(Object[] array, int startIndex, int endIndex)
     {
-        int len = array.length;
+        int      len       = array.length;
+        Class    classType = array.getClass().getComponentType();
+        Object[] subArray  = null;
+                
 
         if (len == 0)
-            return new Object[0];
+            return (Object[])Array.newInstance(classType, 0);
+        else
+        {        
+            /* do bounds checking */
+            Assert.isTrue(startIndex <= endIndex, 
+                          "Start index " + startIndex + 
+                          " must be <= end index of " + 
+                          endIndex);
+                          
+            Assert.isTrue(endIndex < len, 
+                          "End index " + endIndex + 
+                          " must be < array length of " + len);
+    
+            /* copy array */
+            int subLen = (endIndex - startIndex) + 1;
+            subArray = (Object[])Array.newInstance(classType, subLen);
+            int s = 0;
+    
+            for (int i = startIndex; i <= endIndex;)
+                subArray[s++] = array[i++];
+        }
 
-        /* do bounds checking */
-        Assert.isTrue(startIndex <= endIndex, 
-                      "Start index " + startIndex + 
-                      " must be <= end index of " + 
-                      endIndex);
-                      
-        Assert.isTrue(endIndex <= len, 
-                      "End index " + endIndex + 
-                      " must be <= array length of " + len);
-
-        /* copy array */
-        int subLen = (endIndex - startIndex) + 1;
-        Object[] sub = new Object[subLen];
-        int s = 0;
-
-        for (int i = startIndex; i <= endIndex;)
-            sub[s++] = array[i++];
-
-        return sub;
+        return subArray;
     }
 
 
