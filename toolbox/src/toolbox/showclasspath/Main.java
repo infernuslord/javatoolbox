@@ -205,7 +205,7 @@ public class Main
      * @param   l   number of spaces
      * @return      string containing given number of spaces
      */
-    public static String repeatSpace(int l)
+    static String repeatSpace(int l)
     {
         return repeatString(l, " ");
     }
@@ -218,7 +218,7 @@ public class Main
      * @param   s   string to repeat
      * @return      string with given character repeated given number of times
      */
-    public static String repeatString(int l, String s)
+    static String repeatString(int l, String s)
     {
         StringBuffer sbuf = new StringBuffer("");
 
