@@ -1,3 +1,2 @@
 Manifest-Version: 1.0
 Main-Class: toolbox.launcher.Main
-Class-Path: ./ ./lib/junit.jar ./lib/log4j.jar ./lib/jakarta-regexp-1.2.jar
